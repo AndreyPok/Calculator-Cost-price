@@ -1,88 +1,267 @@
+
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#f6f7fb" />
-  <title>Себестоимость 3D-печати · Bambu Lab A1</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8fa">
+  <title>Калькулятор 3D-печати</title>
   <style>
-    :root { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; color: #172033; background: #f6f7fb; font-synthesis: none; }
     * { box-sizing: border-box; }
-    body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 28px 16px; }
-    .panel { background: #fff; border: 1px solid #e6eaf0; border-radius: 22px; width: min(100%, 520px); box-shadow: 0 18px 55px rgba(26,40,64,.07); padding: 30px; }
-    .eyebrow { color: #68758a; font-size: 13px; font-weight: 650; letter-spacing: .055em; text-transform: uppercase; margin: 0 0 9px; }
-    h1 { font-size: 25px; line-height: 1.2; margin: 0 0 9px; letter-spacing: -.5px; }
-    .subtitle { color: #6b7585; line-height: 1.5; font-size: 14px; margin: 0 0 27px; }
-    .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 17px; }
-    label { display: block; font-size: 13px; font-weight: 650; margin-bottom: 8px; color: #445168; }
-    .input-wrap { position: relative; }
-    input { width: 100%; min-width: 0; border: 1px solid #dce2eb; border-radius: 12px; background: #fbfcfe; padding: 13px 54px 13px 13px; outline: 0; font: inherit; font-size: 17px; font-weight: 600; color: #192435; transition: border .15s,box-shadow .15s; appearance: textfield; }
-    input::-webkit-inner-spin-button, input::-webkit-outer-spin-button { -webkit-appearance: none; }
-    input:focus { border-color: #7087db; box-shadow: 0 0 0 3px rgba(92,116,218,.13); }
-    .suffix { position: absolute; right: 13px; top: 50%; transform: translateY(-50%); font-size: 12px; color: #8791a1; pointer-events: none; }
-    hr { border: 0; border-top: 1px solid #e8ecf2; margin: 26px 0 22px; }
-    .total-label { font-size: 14px; color: #667286; font-weight: 550; }
-    .total { font-size: 44px; letter-spacing: -2px; font-weight: 750; margin: 4px 0 24px; font-variant-numeric: tabular-nums; }
-    .breakdown { display: grid; gap: 16px; }
-    .line { display: flex; gap: 16px; justify-content: space-between; align-items: baseline; font-size: 15px; }
-    .line span { color: #5d697a; }
-    .line strong { white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 650; }
-    .footnote { margin: 22px 0 0; font-size: 12px; color: #8a94a4; line-height: 1.55; }
-    @media(max-width:440px) { .panel { padding: 23px 19px; } .fields { gap: 13px; } h1 {font-size:22px;} input {font-size:16px; padding-right:43px;} .total {font-size:40px;} }
+
+    body {
+      margin: 0;
+      padding: 48px 18px;
+      background: #f7f8fa;
+      color: #182029;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    main { max-width: 520px; margin: auto; }
+
+    .tag {
+      color: #278763;
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: 2px;
+    }
+
+    h1 {
+      font-size: clamp(30px, 7vw, 40px);
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      margin: 16px 0;
+    }
+
+    .intro {
+      color: #73808d;
+      line-height: 1.5;
+      margin-bottom: 28px;
+    }
+
+    .card {
+      padding: 26px;
+      background: white;
+      border: 1px solid #e8ebee;
+      border-radius: 24px;
+      box-shadow: 0 12px 36px #25344908;
+    }
+
+    .inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    label {
+      display: block;
+      color: #596673;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .field { position: relative; }
+
+    input {
+      width: 100%;
+      min-width: 0;
+      height: 60px;
+      padding: 0 38px 0 14px;
+      border: 1px solid #dde3e8;
+      border-radius: 12px;
+      outline: none;
+      background: white;
+      font-size: 23px;
+      font-weight: 650;
+      color: #182029;
+    }
+
+    input:focus {
+      border-color: #278763;
+      box-shadow: 0 0 0 3px #2787631c;
+    }
+
+    .unit {
+      position: absolute;
+      right: 14px;
+      top: 20px;
+      color: #89949f;
+      font-size: 14px;
+    }
+
+    hr {
+      border: 0;
+      border-top: 1px solid #e8ebee;
+      margin: 28px 0;
+    }
+
+    .caption {
+      color: #73808d;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .total {
+      margin: 8px 0 28px;
+      font-size: clamp(42px, 11vw, 58px);
+      font-weight: 750;
+      letter-spacing: -2px;
+    }
+
+    .total small {
+      font-size: 26px;
+      font-weight: 600;
+    }
+
+    .details { display: grid; gap: 17px; }
+
+    .line {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 14px;
+    }
+
+    .line span { color: #73808d; }
+    .line strong { white-space: nowrap; }
+
+    button {
+      width: 100%;
+      margin-top: 30px;
+      padding: 17px;
+      border: none;
+      border-radius: 12px;
+      background: #1c7457;
+      color: white;
+      font-size: 15px;
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    button:active { background: #155b45; }
+
+    .footer {
+      margin-top: 22px;
+      color: #89949f;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    @media(max-width: 370px) {
+      .inputs { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
-  <main class="panel">
-    <p class="eyebrow">Bambu Lab A1 · PLA</p>
-    <h1>Себестоимость 3D-печати</h1>
-    <p class="subtitle">Меняй параметры, расчёт обновляется автоматически.</p>
+  <main>
+    <div class="tag">3D PRINT / PLA</div>
+    <h1>Расчёт стоимости печати</h1>
+    <p class="intro">
+      Укажите вес модели и время печати,
+      чтобы узнать ориентировочную стоимость заказа.
+    </p>
 
-    <section class="fields" aria-label="Параметры печати">
-      <div>
-        <label for="mass">Вес модели</label>
-        <div class="input-wrap"><input id="mass" type="number" min="0" step="1" value="100" inputmode="decimal"><span class="suffix">г</span></div>
+    <section class="card">
+      <div class="inputs">
+        <div>
+          <label for="weight">Расход пластика</label>
+          <div class="field">
+            <input id="weight" type="number" min="0" value="100">
+            <span class="unit">г</span>
+          </div>
+        </div>
+        <div>
+          <label for="hours">Время печати</label>
+          <div class="field">
+            <input id="hours" type="number" min="0" step="0.5" value="4">
+            <span class="unit">ч</span>
+          </div>
+        </div>
       </div>
-      <div>
-        <label for="hours">Время печати</label>
-        <div class="input-wrap"><input id="hours" type="number" min="0" step="0.1" value="4" inputmode="decimal"><span class="suffix">ч</span></div>
+
+      <hr>
+
+      <div class="caption">Предварительная стоимость</div>
+      <div class="total"><span id="total">280</span> <small>₽</small></div>
+
+      <div class="details">
+        <div class="line">
+          <span>Подготовка и запуск</span>
+          <strong>50 ₽</strong>
+        </div>
+        <div class="line">
+          <span>Пластик · 1,5 ₽/г</span>
+          <strong id="plastic">150 ₽</strong>
+        </div>
+        <div class="line">
+          <span>Работа принтера · 20 ₽/ч</span>
+          <strong id="time">80 ₽</strong>
+        </div>
       </div>
-      <div>
-        <label for="spool">Цена катушки 1 кг</label>
-        <div class="input-wrap"><input id="spool" type="number" min="0" step="10" value="1200" inputmode="decimal"><span class="suffix">₽</span></div>
-      </div>
+
+      <button id="copy">Скопировать расчёт</button>
     </section>
 
-    <hr>
-    <div class="total-label">Расчётная себестоимость</div>
-    <div class="total" id="total" aria-live="polite">143 ₽</div>
-
-    <section class="breakdown" aria-label="Состав себестоимости">
-      <div class="line"><span>Пластик</span><strong id="material">120,0 ₽</strong></div>
-      <div class="line"><span>Электричество</span><strong id="electricity">2,7 ₽</strong></div>
-      <div class="line"><span>Амортизация</span><strong id="amortization">12,0 ₽</strong></div>
-      <div class="line"><span>Резерв 7%</span><strong id="reserve">8,4 ₽</strong></div>
-    </section>
-    <p class="footnote">В расчёте фиксированы: мощность 95 Вт, тариф 7 ₽/кВт·ч, амортизация 3 ₽/час и резерв 7% от стоимости пластика. Вес указывай с учётом поддержек и отходов.</p>
+    <p class="footer">
+      Цена ориентировочная. Моделирование и
+      постобработка обсуждаются отдельно.
+    </p>
   </main>
+
   <script>
-    const fields = ['mass', 'hours', 'spool'].map(id => document.getElementById(id));
-    const rub = value => value.toLocaleString('ru-RU', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' ₽';
-    const number = el => Math.max(0, Number(el.value) || 0);
-    function update() {
-      const [mass, hours, spool] = fields.map(number);
-      const material = mass * spool / 1000;
-      const electricity = hours * .095 * 7;
-      const amortization = hours * 3;
-      const reserve = material * .07;
-      const total = material + electricity + amortization + reserve;
-      document.getElementById('material').textContent = rub(material);
-      document.getElementById('electricity').textContent = rub(electricity);
-      document.getElementById('amortization').textContent = rub(amortization);
-      document.getElementById('reserve').textContent = rub(reserve);
-      document.getElementById('total').textContent = Math.round(total).toLocaleString('ru-RU') + ' ₽';
+    const weight = document.getElementById('weight');
+    const hours = document.getElementById('hours');
+    const totalEl = document.getElementById('total');
+    const plasticEl = document.getElementById('plastic');
+    const timeEl = document.getElementById('time');
+    const copyBtn = document.getElementById('copy');
+
+    const numberFormat = new Intl.NumberFormat('ru-RU', {
+      maximumFractionDigits: 2
+    });
+
+    const money = value => numberFormat.format(value) + ' ₽';
+    const value = input => Math.max(0, Number(input.value) || 0);
+
+    function calculate() {
+      const plastic = value(weight) * 1.5;
+      const time = value(hours) * 20;
+      const total = 50 + plastic + time;
+
+      plasticEl.textContent = money(plastic);
+      timeEl.textContent = money(time);
+      totalEl.textContent = numberFormat.format(total);
+
+      return `3D-печать PLA
+Вес: ${value(weight)} г
+Время: ${value(hours)} ч
+Запуск: 50 ₽
+Пластик: ${money(plastic)}
+Работа принтера: ${money(time)}
+Итого: ${money(total)}`;
     }
-    fields.forEach(field => field.addEventListener('input', update));
-    update();
+
+    weight.addEventListener('input', calculate);
+    hours.addEventListener('input', calculate);
+
+    copyBtn.addEventListener('click', async () => {
+      const text = calculate();
+
+      try {
+        await navigator.clipboard.writeText(text);
+        copyBtn.textContent = 'Скопировано ✓';
+      } catch {
+        copyBtn.textContent = 'Не удалось скопировать';
+      }
+
+      setTimeout(() => {
+        copyBtn.textContent = 'Скопировать расчёт';
+      }, 1800);
+    });
+
+    calculate();
   </script>
 </body>
 </html>
